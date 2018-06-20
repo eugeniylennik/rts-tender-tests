@@ -1,0 +1,44 @@
+plugins {
+    id 'java'
+    id 'idea'
+}
+
+group 'ru.rts-tender'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+ext{
+    SLF4J_VERSION = '1.7.25'
+    TESTNG_VERSION = '6.14.3'
+    SELENIDE_VERSION = '4.10.01'
+}
+
+dependencies {
+    compile "org.slf4j:slf4j-api:${SLF4J_VERSION}"
+    compile "org.slf4j:slf4j-log4j12:${SLF4J_VERSION}"
+    compile "org.testng:testng:${TESTNG_VERSION}"
+    compile "com.codeborne:selenide:${SELENIDE_VERSION}"
+}
+
+test {
+    useTestNG {
+        suites 'src/test/resources/testng.xml'
+    }
+    testLogging {
+        showStandardStreams = true
+    }
+    afterSuite { desc, result ->
+        if (!desc.parent) {
+            def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+            def startItem = '', endItem = ''
+            def repeatLength = startItem.length() + output.length() + endItem.length()
+            println('\n' + ('=' * repeatLength) + '\n' + startItem + output + endItem + '\n' + ('=' * repeatLength))
+        }
+    }
+}
